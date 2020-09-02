@@ -25,7 +25,8 @@ func main() {
 	check(err)
 
 	var dat map[string]interface{}
-	var msgs = make([][]byte, 2)
+	var msgs = make([][]byte, 5)
+	var count int8 = 0
 
 	for {
 		m, err := r.ReadMessage(context.Background())
@@ -36,14 +37,15 @@ func main() {
 		check(err)
 
 		if dat["message_type"].(string) == "eof" {
-			msgs[1] = m.Value
+			msgs[count] = m.Value
 			file := "/tmp/consumer_data/" + string(m.Key)
 
 			err = ioutil.WriteFile(file, bytes.Join(msgs, []byte("\n\n")), 0644)
 			check(err)
-			reset(msgs)
+			reset(msgs, &count)
 		} else {
-			msgs[0] = m.Value
+			msgs[count] = m.Value
+			count += 1
 		}
 	}
 
@@ -56,7 +58,10 @@ func check(err error) {
 	}
 }
 
-func reset(msgs [][]byte) {
-	msgs[0] = nil
-	msgs[1] = nil
+func reset(msgs [][]byte, count *int8) {
+	for i := 0; i < len(msgs); i++ {
+		msgs[i] = nil
+	}
+
+	*count = 0
 }
