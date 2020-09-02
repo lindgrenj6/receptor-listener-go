@@ -3,11 +3,10 @@ package main
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
-
-	json "encoding/json"
 
 	kafka "github.com/segmentio/kafka-go"
 )
