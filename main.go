@@ -13,8 +13,14 @@ import (
 )
 
 func main() {
+	// run with KAFKA_HOST="host:port" to point at any kafka host
+	kafka_host := os.Getenv("KAFKA_HOST")
+	if kafka_host == "" {
+		kafka_host = "localhost:9092"
+	}
+
 	r := kafka.NewReader(kafka.ReaderConfig{
-		Brokers:  []string{"localhost:9092"},
+		Brokers:  []string{kafka_host},
 		GroupID:  "consumer-group-id",
 		Topic:    "platform.receptor-controller.responses",
 		MinBytes: 10e3, // 10KB
